@@ -4,39 +4,44 @@ An end-to-end framework and bridge for deploying **Edge Impulse TinyML / Edge AI
 
 ---
 
-## Overview
-
-Edge Impulse provides automated DSP and neural network training optimized for resource-constrained edge devices. MATLAB & Simulink are industry standards for dynamic system simulation, control loops, signal processing, and Hardware-in-the-Loop (HIL) testing.
-
-**EI_Matlab_Int** bridges both worlds by compiling Edge Impulse's standalone C++ deployment packages into **native MATLAB Executables (MEX)** and **Simulink S-Functions**, enabling:
-* Real-time model inference inside MATLAB scripts and functions.
-* Closed-loop control simulation and Digital Twins in Simulink.
-* Instant validation of Edge Impulse models on synthetic or recorded sensor datasets.
-
----
-
 ## Repository Structure
 
 ```
 EI_Matlab_Int/
-├── edge_impulse_model/         # Unpacked Edge Impulse C++ Deployment SDK
-│   ├── edge-impulse-sdk/       # Core DSP, mathematical routines & TFLite Micro
-│   ├── model-parameters/       # Model metadata, labels, and DSP configurations
-│   └── tflite-model/           # Compiled EON neural network graph & weights
 │
-├── ei_classifier_mex.cpp       # Native C++ MEX Gateway (Bridge to MATLAB)
-├── build_mex.m                 # Automated build script invoking MATLAB's MEX compiler
-├── test_coffee_classifier.m    # Scenario verification script with waveform visualization
+├── coffee_machine_test/        # Self-contained scenario: Coffee machine vibration classification
+│   ├── edge_impulse_model/     # C++ Deployment SDK (DSP routines + EON compiled model)
+│   ├── ei_classifier_mex.cpp   # Native C++ MEX Gateway
+│   ├── build_mex.m             # Compiler script for MSVC / MinGW
+│   ├── test_coffee_classifier.m# Test suite with waveform plots & confidence scores
+│   ├── run_coffee_test.m       # All-in-one runner (auto-builds & executes)
+│   └── SCENARIO_COFFEE_MACHINE.md # Dedicated documentation for this scenario
 │
-├── SCENARIO_COFFEE_MACHINE.md  # Detailed documentation for Coffee Machine vibration scenario
-└── README.md                   # Project overview & architecture guide
+├── .gitignore                  # Ignores compiled binaries (*.mexw64, *.obj) & temp files
+└── README.md                   # Repository overview & architecture
 ```
+
+---
+
+## Quick Start (Coffee Machine Scenario)
+
+1. Open MATLAB and navigate to the project directory:
+   ```matlab
+   cd 'c:\path\to\EI_Matlab_Int\coffee_machine_test'
+   ```
+2. Run the all-in-one test script:
+   ```matlab
+   run_coffee_test
+   ```
+   * Automatically compiles `ei_classifier_mex.mexw64` if not already present.
+   * Feeds synthetic 3-axis vibration signals into the model.
+   * Displays classification predictions (`idle`, `pump`, `grind`, `extract`) and plots the waveforms in a MATLAB figure window.
 
 ---
 
 ## Active Scenarios
 
-* **[Scenario 1: Coffee Machine Vibration Classification](SCENARIO_COFFEE_MACHINE.md)**
+* **[Coffee Machine Vibration Classification](coffee_machine_test/SCENARIO_COFFEE_MACHINE.md)**
   * **Input:** 3-axis vibration data ($accZ, accY, accX$) at $100\text{ Hz}$ ($200\text{ samples}$ / $2.0\text{ s}$ window).
   * **DSP:** Spectral Analysis (FFT length 16, 39 features).
   * **Model:** INT8 Quantized EON Compiled Neural Network.
@@ -44,41 +49,10 @@ EI_Matlab_Int/
 
 ---
 
-## Prerequisites
-
-1. **MATLAB:** R2020b or later (tested on R2025b).
-2. **C++ Compiler:**
-   * **Windows:** Microsoft Visual C++ 2019 / 2022 (Build Tools or Visual Studio) with C++20 support, or MinGW-w64.
-   * Verify compiler setup in MATLAB with:
-     ```matlab
-     mex -setup cpp
-     ```
-
----
-
-## Quick Start
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Vikram4405/EI_Matlab_Int.git
-   cd EI_Matlab_Int
-   ```
-2. Open MATLAB and navigate to the project directory.
-3. Build the MEX binary:
-   ```matlab
-   build_mex
-   ```
-4. Run the test suite:
-   ```matlab
-   test_coffee_classifier
-   ```
-
----
-
 ## Roadmap
 
 - [x] **Phase 1:** Standalone C++ MEX inference engine with automated MSVC build script.
-- [x] **Phase 2:** Scenario 1 (Coffee Machine Vibration Stage Classification) with visualization.
+- [x] **Phase 2:** Scenario 1 (Coffee Machine Vibration Stage Classification) isolated in `coffee_machine_test/`.
 - [ ] **Phase 3:** Simulink C-MEX S-Function Block for continuous dynamic simulation.
 - [ ] **Phase 4:** MATLAB App Designer GUI for interactive waveform testing and audio/vibration playback.
 - [ ] **Phase 5:** Automated Edge Impulse REST API bridge to upload synthetic training data directly from MATLAB.

@@ -1,6 +1,11 @@
 % test_coffee_classifier.m
 % Tests the compiled Edge Impulse Coffee Machine Vibration Classifier MEX function.
 
+scriptDir = fileparts(mfilename('fullpath'));
+if ~isempty(scriptDir)
+    addpath(scriptDir);
+end
+
 fprintf('=== Testing Edge Impulse Coffee Machine Vibration Classifier ===\n\n');
 
 % Verify the compiled MEX file exists

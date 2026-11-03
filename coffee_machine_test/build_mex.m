@@ -1,7 +1,10 @@
 % build_mex.m - Compiles Edge Impulse Coffee Machine Vibration Classifier into MATLAB MEX
 fprintf('=== Building Edge Impulse MEX Classifier ===\n');
 
-baseDir = pwd;
+baseDir = fileparts(mfilename('fullpath'));
+if isempty(baseDir)
+    baseDir = pwd;
+end
 eiDir = fullfile(baseDir, 'edge_impulse_model');
 
 % Include directories
@@ -47,7 +50,7 @@ sources = { ...
 
 fprintf('Compiling %d targeted source files into ei_classifier_mex.mexw64...\n', length(sources));
 try
-    mex(includeDirs{:}, defs{:}, sources{:}, '-output', 'ei_classifier_mex');
+    mex(includeDirs{:}, defs{:}, sources{:}, '-output', fullfile(baseDir, 'ei_classifier_mex'));
     fprintf('\n********************************************************\n');
     fprintf(' SUCCESS: ei_classifier_mex.mexw64 built successfully!\n');
     fprintf('********************************************************\n');
