@@ -83,3 +83,40 @@ test_coffee_classifier
 This script generates simulated vibration profiles (Idle, Pump, Grind) and displays:
 * Console classification table and confidence percentages.
 * An interactive MATLAB Figure with vibration waveforms and prediction bar charts.
+
+---
+
+## 5. Simulink Real-Time Streaming Integration
+
+For dynamic systems and Hardware-in-the-Loop (HIL) simulation, a Level-2 C-MEX S-Function block (`ei_classifier_sfun`) embeds the Edge Impulse model directly into Simulink diagrams:
+
+```
++-------------------------------------------------------------------------+
+|                                Simulink                                 |
+|                                                                         |
+|  [3-Axis Vibration Stream]  --->  [Edge Impulse Classifier S-Function]  |
+|      (SampleTime: 0.01 s)                   │                           |
+|                                             ├──> Predicted Stage ID     |
+|                                             ├──> Class Probabilities    |
+|                                             └──> Confidence Score       |
++-------------------------------------------------------------------------+
+```
+
+### Architecture Details:
+* **Circular DWork Ring Buffer:** Holds 600 floats ($200\text{ samples} \times 3\text{ axes}$).
+* **Sample Rate:** $100\text{ Hz}$ ($0.01\text{ s}$ fixed step).
+* **Sliding Window Inference:** Unrolls the circular buffer into chronological order and runs DSP + Neural inference every 10 samples ($100\text{ ms}$).
+* **Warmup Handling:** Outputs safe default state (`idle`, class 3) during initial 2.0s buffer fill.
+
+### How to Run the Simulink Simulation:
+```matlab
+% 1. Build the S-Function binary (if not already built)
+build_sfun
+
+% 2. Open or re-generate the Simulink model
+create_coffee_simulink_model
+
+% 3. Run the automated 12-second streaming simulation test
+run_simulink_simulation
+```
+This feeds a continuous 12-second vibration sequence through Idle $\rightarrow$ Grind $\rightarrow$ Pump $\rightarrow$ Extract, records the real-time classification switches, and exports `coffee_machine_sim_result.png`.

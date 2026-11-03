@@ -3,6 +3,8 @@
 *.m~
 *.mat
 *.slxc
+slprj/
+**/slprj/
 
 # Compiled MEX binaries and intermediate build artifacts
 *.mexw64

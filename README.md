@@ -11,10 +11,16 @@ EI_Matlab_Int/
 │
 ├── coffee_machine_test/        # Self-contained scenario: Coffee machine vibration classification
 │   ├── edge_impulse_model/     # C++ Deployment SDK (DSP routines + EON compiled model)
-│   ├── ei_classifier_mex.cpp   # Native C++ MEX Gateway
-│   ├── build_mex.m             # Compiler script for MSVC / MinGW
+│   ├── ei_classifier_mex.cpp   # Native C++ MEX Gateway (MATLAB workspace inference)
+│   ├── build_mex.m             # Compiler script for MEX function
 │   ├── test_coffee_classifier.m# Test suite with waveform plots & confidence scores
-│   ├── run_coffee_test.m       # All-in-one runner (auto-builds & executes)
+│   ├── run_coffee_test.m       # All-in-one runner (auto-builds MEX & executes)
+│   ├── ei_classifier_sfun.cpp  # Level-2 C-MEX S-Function with circular DWork ring buffer
+│   ├── build_sfun.m            # Compiler script for Simulink S-Function
+│   ├── create_coffee_simulink_model.m # Programmatic generator for coffee_machine_sim.slx
+│   ├── coffee_machine_sim.slx  # Simulink model with scopes & logged outports
+│   ├── run_simulink_simulation.m # 12-second real-time streaming simulation runner
+│   ├── coffee_machine_sim_result.png # Plotted streaming simulation waveform results
 │   └── SCENARIO_COFFEE_MACHINE.md # Dedicated documentation for this scenario
 │
 ├── .gitignore                  # Ignores compiled binaries (*.mexw64, *.obj) & temp files
@@ -53,6 +59,6 @@ EI_Matlab_Int/
 
 - [x] **Phase 1:** Standalone C++ MEX inference engine with automated MSVC build script.
 - [x] **Phase 2:** Scenario 1 (Coffee Machine Vibration Stage Classification) isolated in `coffee_machine_test/`.
-- [ ] **Phase 3:** Simulink C-MEX S-Function Block for continuous dynamic simulation.
+- [x] **Phase 3:** Simulink C-MEX S-Function Block (`ei_classifier_sfun`) with circular streaming FIFO buffer and `coffee_machine_sim.slx`.
 - [ ] **Phase 4:** MATLAB App Designer GUI for interactive waveform testing and audio/vibration playback.
 - [ ] **Phase 5:** Automated Edge Impulse REST API bridge to upload synthetic training data directly from MATLAB.
