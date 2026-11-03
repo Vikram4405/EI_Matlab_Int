@@ -1,0 +1,20 @@
+# MATLAB temporary files
+*.asv
+*.m~
+*.mat
+*.slxc
+
+# Compiled MEX binaries and intermediate build artifacts
+*.mexw64
+*.mexa64
+*.mexmaci64
+*.obj
+*.o
+*.lib
+*.exp
+*.pdb
+*.ilk
+
+# Operating system files
+.DS_Store
+Thumbs.db
